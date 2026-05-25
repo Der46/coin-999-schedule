@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>活動時刻表</title>
+
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <main class="app">
+        <section class="hero">
+            <h1>活動時刻表</h1>
+        </section>
+
+        <section class="calendar-card">
+            <div class="calendar-header">
+                <div>
+                    <h2 id="calendarTitle" class="calendar-title">萬年曆</h2>
+                    <div id="calendarSubtitle" class="calendar-subtitle">點日期可查看該星期活動</div>
+                </div>
+
+                <div class="calendar-actions">
+                    <button id="prevMonthBtn" class="calendar-btn" type="button">上月</button>
+                    <button id="todayBtn" class="calendar-btn" type="button">今天</button>
+                    <button id="nextMonthBtn" class="calendar-btn" type="button">下月</button>
+                </div>
+            </div>
+
+            <div class="calendar-weekdays">
+                <div class="calendar-weekday">日</div>
+                <div class="calendar-weekday">一</div>
+                <div class="calendar-weekday">二</div>
+                <div class="calendar-weekday">三</div>
+                <div class="calendar-weekday">四</div>
+                <div class="calendar-weekday">五</div>
+                <div class="calendar-weekday">六</div>
+            </div>
+
+            <div id="calendarGrid" class="calendar-grid"></div>
+        </section>
+
+        <section id="detailSection" class="detail-section">
+            <div class="panel detail-panel">
+                <div class="panel-title">
+                    <h2>活動資料內容</h2>
+                </div>
+
+                <div id="detailEmpty" class="detail-empty">
+                    請從上方萬年曆選擇日期，或使用下方搜尋功能。
+                </div>
+
+                <div id="detailBox" class="detail-box">
+                    <div class="detail-top">
+                        <div id="detailCommand" class="detail-command"></div>
+                        <div id="todayBadge" class="today-badge"></div>
+                    </div>
+
+                    <h3 id="detailTitle"></h3>
+
+                    <div id="scheduleView"></div>
+
+                    <button id="rawToggleBtn" class="raw-description-toggle" type="button">
+                        顯示原始文字內容
+                    </button>
+
+                    <div id="detailDescription" class="raw-description"></div>
+
+                    <div id="detailMedia" class="detail-media"></div>
+
+                    <button id="copyBtn" class="copy-btn" type="button">複製資料內容</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="search-card">
+            <div class="search-row">
+                <input id="searchInput" class="search-input" type="text" placeholder="請輸入指定名稱，例如：週一、/1、金球、金槌、建村..."
+                    autocomplete="off" />
+                <button id="clearBtn" class="clear-btn" type="button">清除</button>
+            </div>
+
+            <div class="quick-in-search">
+                <p class="quick-title">快速搜尋</p>
+                <div id="quickButtons" class="quick-buttons"></div>
+            </div>
+        </section>
+
+        <section class="content">
+            <div class="panel result-panel">
+                <div class="panel-title">
+                    <h2>搜尋結果</h2>
+                    <span id="resultCount" class="count">0 筆</span>
+                </div>
+
+                <div id="resultList" class="result-list scroll-list">
+                    <div class="loading-box">資料載入中...</div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="site-footer">
+            <p>Copyright © Coin-999長長久久 隊伍</p>
+        </footer>
+    </main>
+
+    <div id="imageLightbox" class="image-lightbox" aria-hidden="true">
+        <button id="imageLightboxClose" class="image-lightbox-close" type="button" aria-label="關閉圖片預覽">
+            ×
+        </button>
+
+        <button id="imageLightboxPrev" class="image-lightbox-nav image-lightbox-prev" type="button" aria-label="上一張">
+            ‹
+        </button>
+
+        <img id="imageLightboxImg" class="image-lightbox-img" src="" alt="圖片預覽" />
+
+        <button id="imageLightboxNext" class="image-lightbox-nav image-lightbox-next" type="button" aria-label="下一張">
+            ›
+        </button>
+
+        <div id="imageLightboxCounter" class="image-lightbox-counter"></div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
