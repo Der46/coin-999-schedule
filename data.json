@@ -259,5 +259,11 @@
         "type": "imageOnly",
         "image": "images/sprint-01.jpg",
         "description": "/衝刺\n雷神任務衝刺\n14關：90K（9萬）\n19關：200K（20萬）\n25關：450K（45萬）\n30關：1M（100萬）\n週一中午 12:00 結束"
+    },
+    {
+        "command": "/村價",
+        "title": "村落價格查詢",
+        "type": "villageCost",
+        "description": "輸入村莊編號，即可查詢對應村落價格。"
     }
 ]

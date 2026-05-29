@@ -1664,3 +1664,197 @@ mark {
         grid-template-columns: 1fr;
     }
 }
+
+.village-cost-card {
+    margin-top: 16px;
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid #bbf7d0;
+    border-radius: 18px;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+}
+
+.village-cost-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 18px;
+    color: #fff;
+    background: linear-gradient(135deg, #16a34a, #059669);
+}
+
+.village-cost-title {
+    font-size: 24px;
+    font-weight: 950;
+    line-height: 1.35;
+}
+
+.village-cost-subtitle {
+    margin-top: 4px;
+    font-size: 14px;
+    font-weight: 800;
+    opacity: 0.92;
+}
+
+.village-cost-count {
+    flex-shrink: 0;
+    padding: 7px 11px;
+    color: #047857;
+    font-size: 13px;
+    font-weight: 950;
+    white-space: nowrap;
+    background: #ecfdf5;
+    border-radius: 999px;
+}
+
+.village-cost-search {
+    display: flex;
+    gap: 10px;
+    padding: 16px;
+    background: #ecfdf5;
+    border-bottom: 1px solid #bbf7d0;
+}
+
+.village-cost-input {
+    flex: 1;
+    min-width: 0;
+    padding: 13px 16px;
+    font-family: inherit;
+    font-size: 17px;
+    font-weight: 800;
+    background: #fff;
+    border: 2px solid #bbf7d0;
+    border-radius: 999px;
+    outline: none;
+    transition: 0.18s ease;
+}
+
+.village-cost-input:focus {
+    border-color: #16a34a;
+    box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.14);
+}
+
+.village-cost-btn {
+    flex-shrink: 0;
+    padding: 13px 18px;
+    color: #fff;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 950;
+    white-space: nowrap;
+    background: #16a34a;
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: 0.18s ease;
+}
+
+.village-cost-btn:hover {
+    background: #15803d;
+    transform: translateY(-1px);
+}
+
+.village-cost-result {
+    padding: 18px;
+    color: #374151;
+    font-weight: 800;
+    line-height: 1.8;
+    background: #fff;
+}
+
+.village-cost-placeholder,
+.village-cost-not-found {
+    padding: 22px;
+    text-align: center;
+    background: #f9fafb;
+    border: 1px dashed #d1d5db;
+    border-radius: 16px;
+}
+
+.village-cost-not-found {
+    color: #b91c1c;
+    background: #fff1f2;
+    border-color: #fca5a5;
+}
+
+.village-cost-result-card {
+    padding: 18px;
+    text-align: center;
+    background:
+        radial-gradient(circle at top left, rgba(22, 163, 74, 0.14), transparent 34%),
+        #f8fafc;
+    border: 1px solid #bbf7d0;
+    border-radius: 18px;
+}
+
+.village-cost-number {
+    display: inline-flex;
+    margin-bottom: 10px;
+    padding: 7px 12px;
+    color: #047857;
+    font-size: 14px;
+    font-weight: 950;
+    background: #d1fae5;
+    border-radius: 999px;
+}
+
+.village-cost-name {
+    margin-bottom: 8px;
+    color: #111827;
+    font-size: 26px;
+    font-weight: 950;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+}
+
+.village-cost-price {
+    color: #16a34a;
+    font-size: clamp(30px, 6vw, 48px);
+    font-weight: 1000;
+    line-height: 1.2;
+}
+
+.village-cost-tips {
+    padding: 13px 16px;
+    color: #047857;
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1.7;
+    background: #ecfdf5;
+    border-top: 1px solid #bbf7d0;
+}
+
+@media (max-width: 820px) {
+    .village-cost-header {
+        flex-direction: column;
+        padding: 15px;
+    }
+
+    .village-cost-title {
+        font-size: 20px;
+    }
+
+    .village-cost-subtitle {
+        font-size: 13px;
+    }
+
+    .village-cost-search {
+        flex-direction: column;
+        padding: 13px;
+    }
+
+    .village-cost-input,
+    .village-cost-btn {
+        width: 100%;
+        border-radius: 16px;
+    }
+
+    .village-cost-name {
+        font-size: 21px;
+    }
+
+    .village-cost-price {
+        font-size: 34px;
+    }
+}

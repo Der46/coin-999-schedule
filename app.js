@@ -1,8 +1,11 @@
 "use strict";
 
 let DATA = [];
+let VILLAGES_COST = [];
 let currentSelected = null;
 let dataLoaded = false;
+let villagesCostLoaded = false;
+
 let calendarViewDate = new Date();
 let selectedCalendarDateKey = "";
 let selectedCalendarDate = new Date();
@@ -132,16 +135,28 @@ async function loadData() {
         resultList.innerHTML = `<div class="loading-box">資料載入中...<br />正在讀取 <strong>data.json</strong></div>`;
         resultCount.textContent = "載入中";
 
-        const response = await fetch("data.json", { cache: "no-store" });
+        const [dataResponse, villagesResponse] = await Promise.all([
+            fetch("data.json", { cache: "no-store" }),
+            fetch("villages_cost.json", { cache: "no-store" })
+        ]);
 
-        if (!response.ok) {
-            throw new Error(`無法載入 data.json，HTTP 狀態碼：${response.status}`);
+        if (!dataResponse.ok) {
+            throw new Error(`無法載入 data.json，HTTP 狀態碼：${dataResponse.status}`);
         }
 
-        const jsonData = await response.json();
+        if (!villagesResponse.ok) {
+            throw new Error(`無法載入 villages_cost.json，HTTP 狀態碼：${villagesResponse.status}`);
+        }
+
+        const jsonData = await dataResponse.json();
+        const villagesCostData = await villagesResponse.json();
 
         if (!Array.isArray(jsonData)) {
             throw new Error("data.json 格式錯誤：最外層必須是陣列 []");
+        }
+
+        if (!Array.isArray(villagesCostData)) {
+            throw new Error("villages_cost.json 格式錯誤：最外層必須是陣列 []");
         }
 
         DATA = jsonData.map(item => ({
@@ -157,16 +172,26 @@ async function loadData() {
             linkLabel: item.linkLabel || ""
         }));
 
+        VILLAGES_COST = villagesCostData.map(item => ({
+            編號: Number(item.編號),
+            名稱: item.名稱 || "",
+            成本: item.成本 || ""
+        })).filter(item => Number.isFinite(item.編號));
+
         dataLoaded = true;
+        villagesCostLoaded = true;
+
         renderResults();
     } catch (error) {
         dataLoaded = false;
+        villagesCostLoaded = false;
         DATA = [];
+        VILLAGES_COST = [];
 
         resultList.innerHTML = `
             <div class="error-box">
                 <strong>資料載入失敗</strong><br />
-                請確認 <code>data.json</code> 是否存在，且 JSON 格式正確。<br />
+                請確認 <code>data.json</code> 與 <code>villages_cost.json</code> 是否存在，且 JSON 格式正確。<br />
                 <span>${escapeHtml(error.message)}</span>
             </div>
         `;
@@ -748,6 +773,137 @@ function renderScheduleView(item) {
     });
 }
 
+function findVillageCostByNumber(number) {
+    const villageNumber = Number(number);
+
+    if (!Number.isInteger(villageNumber)) return null;
+
+    return VILLAGES_COST.find(item => Number(item.編號) === villageNumber) || null;
+}
+
+function renderVillageCostView(initialNumber = null) {
+    const totalCount = VILLAGES_COST.length;
+
+    scheduleView.innerHTML = `
+        <div class="village-cost-card">
+            <div class="village-cost-header">
+                <div>
+                    <div class="village-cost-title">🏘️ 村落價格查詢</div>
+                    <div class="village-cost-subtitle">
+                        請輸入村莊編號，例如：1、73、277、523
+                    </div>
+                </div>
+                <div class="village-cost-count">${escapeHtml(totalCount)} 筆資料</div>
+            </div>
+
+            <div class="village-cost-search">
+                <input
+                    id="villageCostInput"
+                    class="village-cost-input"
+                    type="number"
+                    inputmode="numeric"
+                    min="1"
+                    placeholder="輸入村莊編號"
+                    autocomplete="off"
+                />
+                <button id="villageCostSearchBtn" class="village-cost-btn" type="button">
+                    查詢
+                </button>
+            </div>
+
+            <div id="villageCostResult" class="village-cost-result">
+                輸入村莊編號後，這裡會顯示對應村落價格。
+            </div>
+
+            <div class="village-cost-tips">
+                小提醒：也可以在上方搜尋列輸入 <strong>/村價</strong> 開啟這個查詢工具。
+            </div>
+        </div>
+    `;
+
+    const input = $("villageCostInput");
+    const button = $("villageCostSearchBtn");
+    const result = $("villageCostResult");
+    const parsedCommand = parseVillageCostCommand(searchInput.value);
+    const numberFromSearch = parsedCommand && parsedCommand.number ? parsedCommand.number : initialNumber;
+
+
+    const renderResult = () => {
+        const value = String(input.value || "").trim();
+
+        if (!value) {
+            result.innerHTML = `
+                <div class="village-cost-placeholder">
+                    請先輸入村莊編號。
+                </div>
+            `;
+            return;
+        }
+
+        const number = Number(value);
+
+        if (!Number.isInteger(number) || number <= 0) {
+            result.innerHTML = `
+                <div class="village-cost-not-found">
+                    請輸入有效的村莊編號。
+                </div>
+            `;
+            return;
+        }
+
+        const village = findVillageCostByNumber(number);
+
+        if (!village) {
+            result.innerHTML = `
+                <div class="village-cost-not-found">
+                    找不到編號 <strong>${escapeHtml(number)}</strong> 的村落價格。
+                </div>
+            `;
+            return;
+        }
+
+        result.innerHTML = `
+            <div class="village-cost-result-card">
+                <div class="village-cost-number">村莊 ${escapeHtml(village.編號)}</div>
+                <div class="village-cost-name">${escapeHtml(village.名稱)}</div>
+                <div class="village-cost-price">${escapeHtml(village.成本)}</div>
+            </div>
+        `;
+    };
+
+    button.addEventListener("click", renderResult);
+
+    input.addEventListener("keydown", event => {
+        if (event.key === "Enter") {
+            renderResult();
+        }
+    });
+
+    input.addEventListener("input", () => {
+        const value = String(input.value || "").trim();
+
+        if (!value) {
+            result.innerHTML = `
+                <div class="village-cost-placeholder">
+                    輸入村莊編號後，這裡會顯示對應村落價格。
+                </div>
+            `;
+            return;
+        }
+
+        renderResult();
+    });
+
+    if (numberFromSearch) {
+        input.value = String(numberFromSearch);
+        renderResult();
+    }
+
+    setTimeout(() => {
+        input.focus();
+    }, 80);
+}
+
 function fitScheduleBoard() {
     const fit = $("scheduleFit");
     const board = $("scheduleBoard");
@@ -816,6 +972,14 @@ function getScore(item, query) {
 }
 
 function searchData(query) {
+    const villageCostCommand = parseVillageCostCommand(query);
+
+    if (villageCostCommand) {
+        const item = DATA.find(dataItem => dataItem.type === "villageCost");
+
+        return item ? [{ item, score: 10000 }] : [];
+    }
+
     const q = normalizeText(query);
 
     if (!dataLoaded) return [];
@@ -834,6 +998,18 @@ function searchData(query) {
         .map(item => ({ item, score: getScore(item, q) }))
         .filter(result => result.score > 0)
         .sort((a, b) => b.score - a.score);
+}
+
+function parseVillageCostCommand(query) {
+    const text = String(query || "").trim();
+    const match = text.match(/^\/?(村價|村落價格|村莊價格|村落成本|村莊成本)\s*(\d+)?$/);
+
+    if (!match) return null;
+
+    return {
+        command: "/村價",
+        number: match[2] ? Number(match[2]) : null
+    };
 }
 
 function highlightText(text, query) {
@@ -993,6 +1169,8 @@ function selectItem(item, rerender = true, scrollToDetail = false) {
         renderWeeklyScheduleView(item);
     } else if (item.type === "hammerSchedule") {
         renderHammerScheduleView(item);
+    } else if (item.type === "villageCost") {
+        renderVillageCostView();
     } else if (item.type === "imageOnly") {
         scheduleView.innerHTML = renderLinkButton(item);
     } else if (item.type === "mediaText") {
@@ -1154,7 +1332,8 @@ function renderQuickButtons() {
                 { label: "金幣加倍", keyword: "金球" },
                 { label: "攻擊加倍", keyword: "金鎚" },
                 { label: "建村特價", keyword: "建村" },
-                { label: "完村獎勵", keyword: "完村" }
+                { label: "完村獎勵", keyword: "完村" },
+                { label: "村落價格", keyword: "村價" }
             ]
         },
         {
